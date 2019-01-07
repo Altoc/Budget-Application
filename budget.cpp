@@ -8,6 +8,7 @@
 #include "budget.hpp"
 #include <string>
 #include <fstream>
+#include <Windows.h>
 
 /////////////////////////////////////////BUDGET CLASS
 
@@ -54,8 +55,12 @@ void Budget::addPurchaseEntry(std::string purName, int purDate, int purAmt){
 		amtSpent += purAmt;
 }
 
-int Budget::computeRemainingAllowance(int amtSpent, int allowance) {
+int Budget::subtractRemainingAllowance(int amtSpent, int allowance) {
 	return allowance - amtSpent;
+}
+
+int Budget::addRemainingAllowance(int amtGained, int allowance) {
+	return allowance + amtGained;
 }
 
 ///////////////////////////////////////PURCHASE CLASS
@@ -107,7 +112,7 @@ int stringToInt(std::string str){
 void displayBudgets(std::vector<Budget> listOfBudgets, int budgetItr) {
 	std::cout << "Budget: " << listOfBudgets[budgetItr].getName() << std::endl;
 	std::cout << "Starting Allowance: " << listOfBudgets[budgetItr].getAllowance() << std::endl;
-	std::cout << "Remaining Allowance: " << listOfBudgets[budgetItr].computeRemainingAllowance(listOfBudgets[budgetItr].getAllowance(), listOfBudgets[budgetItr].getAmtSpent()) << std::endl;
+	std::cout << "Remaining Allowance: " << listOfBudgets[budgetItr].subtractRemainingAllowance(listOfBudgets[budgetItr].getAllowance(), listOfBudgets[budgetItr].getAmtSpent()) << std::endl;
 }
 
 void saveBudgets(std::vector<Budget> budgets, const char *saveLocation) {
@@ -166,8 +171,46 @@ void loadBudgets(std::vector<Budget> & budgets, const char *loadLocation) {
 }
 
 void deleteBudgets(std::vector<Budget> & budgets, const char *saveLocation) {
-	for (int i = 0; i < budgets.size(); i++) {
+	int vecSize = budgets.size();
+	for (int i = 0; i < vecSize; i++) {
+		std::cerr << "budgets size: " << budgets.size() << std::endl;
 		budgets.pop_back();
+		std::cerr << "loop: " << i << std::endl;
 	}
 	remove(saveLocation);
+}
+
+int searchBudget(std::vector<Budget> & budgets, std::string budgetName) {
+	for (int i = 0; i < budgets.size(); i++) {
+		if (budgets[i].getName() == budgetName) {
+			return i;
+		}
+	}
+	std::cout << "Could not find " << budgetName << "." << std::endl;
+}
+
+void removeBudget(std::vector<Budget> & budgets, std::string budgetName) {
+	budgets.erase(budgets.begin() + searchBudget(budgets, budgetName));
+}
+
+int searchPurchase(std::vector<Budget> & budgets, std::string budgetName, std::string purchaseName) {
+	int indexOfBudget = searchBudget(budgets, budgetName);
+	for (int i = 0; i < budgets[indexOfBudget].purchases.size(); i++) {
+		if (budgets[indexOfBudget].purchases[i].getName() == purchaseName) {
+			return i;
+		}
+	}
+}
+
+void removePurchase(std::vector<Budget> & budgets, std::string budgetName, std::string purchaseName) {
+	int indexOfBudget = searchBudget(budgets, budgetName);
+	budgets[indexOfBudget].purchases.erase(budgets[indexOfBudget].purchases.begin() + searchPurchase(budgets, budgetName, purchaseName));
+}
+
+bool directoryExists(const char* dirName) {
+	DWORD attribs = ::GetFileAttributesA(dirName);
+	if (attribs == INVALID_FILE_ATTRIBUTES) {
+		return false;
+	}
+	return (attribs & FILE_ATTRIBUTE_DIRECTORY);
 }

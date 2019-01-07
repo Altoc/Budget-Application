@@ -10,9 +10,10 @@
 #include <cassert>
 #include <fstream>
 /*
-const char *path = "C:/Users/Ian/Documents/file.txt";
+const char *path = "C:/Budget_Application/save.txt";
 
 int main() {
+	
 	{
 		//setup BUDGET DEFAULT CTOR
 		Budget myBudget;
@@ -249,7 +250,99 @@ int main() {
 			budgets[i].displayPurchases();
 		}
 	}
+	
+	{
+		//setup SEARCH BUDGET
+		Budget myGasBudget("Gas", 500);
+		myGasBudget.addPurchaseEntry("Gas", 2019, 2);
+		myGasBudget.addPurchaseEntry("Gas", 2019, 40);
+		myGasBudget.addPurchaseEntry("Oil Change", 2019, 6);
+		myGasBudget.addPurchaseEntry("Harrison Ford Oil Change", 2019, 90);
+		Budget myFoodBudget("FOOD", 100);
+		myFoodBudget.addPurchaseEntry("Churro", 2019, 2);
+		myFoodBudget.addPurchaseEntry("Ice Cream", 2019, 4);
+		myFoodBudget.addPurchaseEntry("Cookie", 2019, 6);
+		myFoodBudget.addPurchaseEntry("Salsa", 2019, 8);
+		std::vector<Budget> budgets;
+		budgets.push_back(myFoodBudget);
+		budgets.push_back(myGasBudget);
+		//ini
+		int result = searchBudget(budgets, "Gas");
+		//verify
+		assert(result == 1);
+	}
+	
+	{
+		//setup DELETE BUDGET
+		Budget myGasBudget("Gas", 500);
+		myGasBudget.addPurchaseEntry("Gas", 2019, 2);
+		myGasBudget.addPurchaseEntry("Gas", 2019, 40);
+		myGasBudget.addPurchaseEntry("Oil Change", 2019, 6);
+		myGasBudget.addPurchaseEntry("Harrison Ford Oil Change", 2019, 90);
+		Budget myFoodBudget("FOOD", 100);
+		myFoodBudget.addPurchaseEntry("Churro", 2019, 2);
+		myFoodBudget.addPurchaseEntry("Ice Cream", 2019, 4);
+		myFoodBudget.addPurchaseEntry("Cookie", 2019, 6);
+		myFoodBudget.addPurchaseEntry("Salsa", 2019, 8);
+		std::vector<Budget> budgets;
+		budgets.push_back(myFoodBudget);
+		budgets.push_back(myGasBudget);
+		//ini
+		removeBudget(budgets, "FOOD");
+		//verify
+		assert(budgets.size() == 1);
+		assert(budgets[0].getName() == "Gas");
+	}
+	
+	{
+		//setup SEARCH Purchase
+		Budget myGasBudget("Gas", 500);
+		myGasBudget.addPurchaseEntry("Gas", 2019, 2);
+		myGasBudget.addPurchaseEntry("Gas", 2019, 40);
+		myGasBudget.addPurchaseEntry("Oil Change", 2019, 6);
+		myGasBudget.addPurchaseEntry("Harrison Ford Oil Change", 2019, 90);
+		Budget myFoodBudget("FOOD", 100);
+		myFoodBudget.addPurchaseEntry("Churro", 2019, 2);
+		myFoodBudget.addPurchaseEntry("Ice Cream", 2019, 4);
+		myFoodBudget.addPurchaseEntry("Cookie", 2019, 6);
+		myFoodBudget.addPurchaseEntry("Salsa", 2019, 8);
+		std::vector<Budget> budgets;
+		budgets.push_back(myFoodBudget);
+		budgets.push_back(myGasBudget);
+		//ini
+		int result = searchPurchase(budgets, "Gas", "Gas");
+		int result1 = searchPurchase(budgets, "FOOD", "Ice Cream");
+		//verify
+		assert(result == 0);
+		assert(result1 == 1);
+	}
+	
+	{
+		//setup DELETE Purchase
+		Budget myGasBudget("Gas", 500);
+		myGasBudget.addPurchaseEntry("Gas", 2019, 2);
+		myGasBudget.addPurchaseEntry("Gas", 2019, 40);
+		myGasBudget.addPurchaseEntry("Oil Change", 2019, 6);
+		myGasBudget.addPurchaseEntry("Harrison Ford Oil Change", 2019, 90);
+		Budget myFoodBudget("FOOD", 100);
+		myFoodBudget.addPurchaseEntry("Churro", 2019, 2);
+		myFoodBudget.addPurchaseEntry("Ice Cream", 2019, 4);
+		myFoodBudget.addPurchaseEntry("Cookie", 2019, 6);
+		myFoodBudget.addPurchaseEntry("Salsa", 2019, 8);
+		std::vector<Budget> budgets;
+		budgets.push_back(myFoodBudget);
+		budgets.push_back(myGasBudget);
+		//ini
+		removePurchase(budgets, "FOOD", "Cookie");
+		//verify
+		assert(budgets[0].purchases.size() == 3);
+		assert(budgets[0].purchases[0].getName() == "Churro");
+		assert(budgets[0].purchases[1].getName() == "Ice Cream");
+		assert(budgets[0].purchases[2].getName() == "Salsa");
+	}
+	
 	char end;
 	std::cin >> end;
 }
 */
+
