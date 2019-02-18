@@ -1,36 +1,46 @@
 /*
-		*Ian Whitesel
-		*Budget Application Main
-		*01/04/2019
+                *Ian Whitesel
+                *Budget Application Main
+                *01/04/2019
 
-		TODO: Cannot enter multi-word phrases | Finish adding prompts for removing budgets | Fix the math of adding and subtracting purchases | Set up DATE correctly
+                TODO: Cannot enter multi-word phrases | Finish adding prompts for removing budgets | Fix the math of adding and subtracting purchases | Set $
 */
 
 #include <iostream>
 #include "budget.hpp"
 #include <string>
 #include <vector>
-#include <Windows.h>
-#include <direct.h>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/fstream.hpp>
+//#include <Windows.h>
+//#include <direct.h>
 
-const char *dirPath = "C:/Budget_Application";
-const char *filePath = "C:/Budget_Application/save.txt";
+//Windows versions
+//const char *dirPath = "C:/Budget_Application";
+//const char *filePath = "C:/Budget_Application/save.txt";
+
+//boost::filesystem versions
+//const char *dirPath = "./budget_application";
+//const char *filePath = "./budget_applicaton/save.txt";
+const char *filePath = "./save.txt";
+
 char userChoice = '*';
 
 int main(){
-		//Create Directory for saving
-		if (directoryExists(dirPath)) {
-			std::cerr << "Directory exists" << std::endl;
-		}
-		else {
-			std::cerr << "Directory does not exist" << std::endl;
-			_mkdir(dirPath);
-		}
+/*
+                //Create Directory for saving
+                if (boost::filesystem::exists(dirPath)) {
+                        std::cerr << "Directory exists" << std::endl;
+                }
+                else {
+                        std::cerr << "Directory does not exist" << std::endl;
+                        boost::filesystem::create_directory(dirPath);
+                }
+*/
+        std::vector<Budget> budgets;
+        loadBudgets(budgets, filePath);
 
-		std::vector<Budget> budgets;
-		loadBudgets(budgets, filePath);
-
-		std::cout << "Welcome to Ian's Budget Application." << std::endl;
+        std::cout << "Welcome to Ian's Budget Application." << std::endl;
 
         while((userChoice != 'Q') && (userChoice != 'q')){
                 std::cout<<"[C]Create Budget | [P]Log Purchase | [S]See Budgets | [X]Delete Data | [Q]Quit"<<std::endl;
@@ -65,76 +75,71 @@ int main(){
                         std::cout<<"Enter Amount spent: ";
                         std::cin>>purAmt;
 
+
                         for(int i = 0; i < budgets.size(); i++){
                                 if(purBudget == budgets[i].getName()){
-                                        budgets[i].addPurchaseEntry(purName, purDate, purAmt);
+                                        budgets[i].addPurchaseEntry(purName, purDate, purAmt, true);
                                 }
                         }
 
-				}
-				else if ((userChoice == 'S') || (userChoice == 's')) {
-					char subUserChoice = '*';
-					while ((subUserChoice != 'Q') && (subUserChoice != 'q')) {
+				} else if ((userChoice == 'S') || (userChoice == 's')) {
+						char subUserChoice = '*';
+						while ((subUserChoice != 'Q') && (subUserChoice != 'q')) {
 
-						std::cout << "Here are your budgets: " << std::endl;
-						for (int i = 0; i < budgets.size(); i++) {
-							std::cout << "----------------------------------------------------" << std::endl;
-							std::cout << "Name: " << budgets[i].getName() << std::endl;
-							std::cout << "Allowance Remaining: " << budgets[i].getAllowance() << std::endl;
-							std::cout << "Purchases:" << std::endl;
-							budgets[i].displayPurchases();
+								std::cout << "Here are your budgets: " << std::endl;
+								for (int i = 0; i < budgets.size(); i++) {
+										std::cout << "----------------------------------------------------" << std::endl;
+										std::cout << "Name: " << budgets[i].getName() << std::endl;
+										std::cout << "Allowance Remaining: " << budgets[i].getAllowance() << std::endl;
+										std::cout << "Purchases:" << std::endl;
+										budgets[i].displayPurchases();
+								}
+
+								std::cout << "What would you like to do with them? [B]Delete Budget | [P]Delete Purchase | [Q]Main Menu" << $
+								std::cin >> subUserChoice;
+
+								if ((subUserChoice == 'B') || (subUserChoice == 'b')) {
+										std::cout << "Are you sure you want to delete a budget? [Y]Yes | [N]No" << std::endl;
+										char deleteChoice = '*';
+										std::cin >> deleteChoice;
+										if ((deleteChoice == 'Y') || (deleteChoice == 'y')) {
+												std::cout << "Enter the name of the budget you want to delete: ";
+												std::string budgetToDelete = "";
+												std::cin >> budgetToDelete;
+												removeBudget(budgets, budgetToDelete);
+												std::cout << "Budget " << budgetToDelete << " has been removed." << std::endl;
+										}
+								}
+								else if ((subUserChoice == 'P') || (subUserChoice == 'p')) {
+										std::cout << "Are you sure you want to delete a purchase? [Y]Yes | [N]No" << std::endl;
+										char deleteChoice = '*';
+										std::cin >> deleteChoice;
+										if ((deleteChoice == 'Y') || (deleteChoice == 'y')) {
+												std::cout << "Enter the name of the budget the purchase belongs to: ";
+												std::string budgetToDelete = "";
+												std::cin >> budgetToDelete;
+												std::cout << "Enter the name of the purchase you want to delete: ";
+												std::string purchaseToDelete = "";
+												std::cin >> purchaseToDelete;
+												removePurchase(budgets, budgetToDelete, purchaseToDelete);
+												std::cout << "Purchase " << purchaseToDelete << " has been removed." << std::endl;
+										}
+								}
 						}
+				} else if ((userChoice == 'X') || (userChoice == 'x')) {
 
-						std::cout << "What would you like to do with them? [B]Delete Budget | [P]Delete Purchase | [Q]Main Menu" << std::endl;
-						std::cin >> subUserChoice;
-
-						if ((subUserChoice == 'B') || (subUserChoice == 'b')) {
-							std::cout << "Are you sure you want to delete a budget? [Y]Yes | [N]No" << std::endl;
-							char deleteChoice = '*';
-							std::cin >> deleteChoice;
-							if ((deleteChoice == 'Y') || (deleteChoice == 'y')) {
-								std::cout << "Enter the name of the budget you want to delete: ";
-								std::string budgetToDelete = "";
-								std::cin >> budgetToDelete;
-								removeBudget(budgets, budgetToDelete);
-								std::cout << "Budget " << budgetToDelete << " has been removed." << std::endl;
-							}
+						char deleteChoice = '*';
+						while ((deleteChoice != 'N') && (deleteChoice != 'Y') && (deleteChoice != 'n') && (deleteChoice != 'y')) {
+								std::cout << std::endl << "**WARNING**" << std::endl << std::endl;
+								std::cout << "This will DELETE all of your data" << std::endl << "Proceed? [Y]Yes | [N]No" << std::endl;
+								std::cin >> deleteChoice;
+								if ((deleteChoice == 'Y') || (deleteChoice == 'y' )){
+										deleteBudgets(budgets, filePath);
+										std::cout << "Data Deleted." << std::endl;
+								}
 						}
-						else if ((subUserChoice == 'P') || (subUserChoice == 'p')) {
-							std::cout << "Are you sure you want to delete a purchase? [Y]Yes | [N]No" << std::endl;
-							char deleteChoice = '*';
-							std::cin >> deleteChoice;
-							if ((deleteChoice == 'Y') || (deleteChoice == 'y')) {
-								std::cout << "Enter the name of the budget the purchase belongs to: ";
-								std::string budgetToDelete = "";
-								std::cin >> budgetToDelete;
-								std::cout << "Enter the name of the purchase you want to delete: ";
-								std::string purchaseToDelete = "";
-								std::cin >> purchaseToDelete;
-								removePurchase(budgets, budgetToDelete, purchaseToDelete);
-								std::cout << "Purchase " << purchaseToDelete << " has been removed." << std::endl;
-							}
-						}
-					}
-				}
-
-				else if ((userChoice == 'X') || (userChoice == 'x')) {
-
-					char deleteChoice = '*';
-					while ((deleteChoice != 'N') && (deleteChoice != 'Y') && (deleteChoice != 'n') && (deleteChoice != 'y')) {
-						std::cout << std::endl << "**WARNING**" << std::endl << std::endl;
-						std::cout << "This will DELETE all of your data" << std::endl << "Proceed? [Y]Yes | [N]No" << std::endl;
-						std::cin >> deleteChoice;
-						if ((deleteChoice == 'Y') || (deleteChoice == 'y' )){
-							deleteBudgets(budgets, filePath);
-							std::cout << "Data Deleted." << std::endl;
-						}
-					}
-				}
-
-				else if ((userChoice == 'Q') || (userChoice == 'q')) {
-
-					saveBudgets(budgets, filePath);
+				} else if ((userChoice == 'Q') || (userChoice == 'q')) {
+						saveBudgets(budgets, filePath);
 				}
         }
 }
